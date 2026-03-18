@@ -2,6 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from rag import load_docs, retrieve
+from tools import web_search  # 👈 NEW
 
 # Load environment variables
 load_dotenv()
@@ -14,29 +15,35 @@ db = load_docs()
 
 def ask_llm(query: str) -> str:
     """
-    Uses RAG (retrieval-augmented generation) to answer queries.
+    Uses hybrid retrieval: RAG + Web Search
     """
 
-    # 🔍 Retrieve relevant documents
+    # 🔍 RAG context
     docs = retrieve(query, db)
-    context = "\n".join([doc.page_content for doc in docs])
+    rag_context = "\n".join([doc.page_content for doc in docs])
 
-    # 🧠 Build grounded prompt
+    # 🌐 Web context
+    web_context = web_search(query)
+
+    # 🧠 Combined prompt
     prompt = f"""
 You are an AI research assistant.
 
-Use ONLY the context below to answer the question.
-If the answer is not in the context, say "I don't know".
+Use the context below to answer the question.
+If unsure, say "I don't know".
 
-Context:
-{context}
+Context from documents:
+{rag_context}
+
+Context from web:
+{web_context}
 
 Question: {query}
 
 Answer:
 """
 
-    # 🤖 Call LLM
+    # 🤖 LLM call
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -49,7 +56,7 @@ Answer:
 
 
 if __name__ == "__main__":
-    print("🤖 AI Research Assistant (RAG Enabled) (type 'exit' to quit)\n")
+    print("🤖 AI Research Assistant (RAG + Web) (type 'exit' to quit)\n")
 
     while True:
         user_input = input("You: ")
