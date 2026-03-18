@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from rag import load_docs, retrieve
-from tools import web_search  # 👈 NEW
+from tools import web_search
 
 # Load environment variables
 load_dotenv()
@@ -13,9 +13,22 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 # Load vector database
 db = load_docs()
 
+# 🧠 Simple in-memory chat history
+chat_history = []
+
+def format_history(history):
+    """
+    Convert chat history into a readable string for the prompt.
+    """
+    formatted = ""
+    for turn in history:
+        formatted += f"User: {turn['user']}\nAssistant: {turn['assistant']}\n"
+    return formatted
+
+
 def ask_llm(query: str) -> str:
     """
-    Uses hybrid retrieval: RAG + Web Search
+    Uses hybrid retrieval + memory
     """
 
     # 🔍 RAG context
@@ -25,12 +38,18 @@ def ask_llm(query: str) -> str:
     # 🌐 Web context
     web_context = web_search(query)
 
-    # 🧠 Combined prompt
+    # 🧠 Chat history context
+    history_text = format_history(chat_history)
+
+    # 🧩 Combined prompt
     prompt = f"""
 You are an AI research assistant.
 
-Use the context below to answer the question.
+Use the provided context and conversation history to answer.
 If unsure, say "I don't know".
+
+Conversation History:
+{history_text}
 
 Context from documents:
 {rag_context}
@@ -52,11 +71,19 @@ Answer:
         temperature=0.3
     )
 
-    return response.choices[0].message.content
+    answer = response.choices[0].message.content
+
+    # 💾 Save to memory
+    chat_history.append({
+        "user": query,
+        "assistant": answer
+    })
+
+    return answer
 
 
 if __name__ == "__main__":
-    print("🤖 AI Research Assistant (RAG + Web) (type 'exit' to quit)\n")
+    print("🤖 AI Research Assistant (Memory Enabled) (type 'exit' to quit)\n")
 
     while True:
         user_input = input("You: ")
