@@ -27,10 +27,25 @@ We evaluate responses using an LLM-based evaluator to check correctness and reas
 
 ## ▶️ Run
 
-```bash
-pip install -r requirements.txt
-python app.py
-```
+1. Set up your OpenAI API key:
+   ```bash
+   cp .env.example .env  # or create .env and add OPENAI_API_KEY=your_key_here
+   ```
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Run the CLI app:
+   ```bash
+   python app.py
+   ```
+
+4. Or run the Streamlit UI:
+   ```bash
+   streamlit run ui.py
+   ```
 
 ## ✨ Advanced Features
 - Conversational memory (chat history)

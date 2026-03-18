@@ -1,0 +1,12 @@
+This is a sample document for the RAG system.
+
+Retrieval-Augmented Generation (RAG) combines the strengths of retrieval-based and generation-based approaches. It retrieves relevant information from a knowledge base and uses it to generate more accurate and informative responses.
+
+Key components:
+- Document loading and splitting
+- Vector embeddings
+- Vector database (e.g., FAISS)
+- Similarity search
+- LLM for generation
+
+This system demonstrates a basic RAG implementation using LangChain and OpenAI.

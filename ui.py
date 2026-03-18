@@ -1,5 +1,5 @@
 import streamlit as st
-from app import ask
+from app import ask_llm
 
 # Page config
 st.set_page_config(
@@ -63,7 +63,7 @@ if query:
     st.session_state.messages.append(("user", query))
 
     # Get response
-    response = ask(query)
+    response = ask_llm(query)
 
     # Save bot response
     st.session_state.messages.append(("bot", response))
