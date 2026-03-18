@@ -1,5 +1,6 @@
-openai
-langchain
-faiss-cpu
-tiktoken
-python-dotenv
+langchain>=0.1.0
+langchain-community>=0.0.10
+langchain-openai>=0.0.2
+faiss-cpu>=1.7.0
+tiktoken>=0.5.0
+python-dotenv>=1.0.0
